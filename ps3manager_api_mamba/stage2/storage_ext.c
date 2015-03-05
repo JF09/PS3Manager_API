@@ -1,4 +1,4 @@
-a#include <lv2/lv2.h>
+#include <lv2/lv2.h>
 #include <lv2/libc.h>
 #include <lv2/memory.h>
 #include <lv2/storage.h>
@@ -2399,7 +2399,7 @@ LV2_HOOKED_FUNCTION_PRECALL_SUCCESS_8(int, post_cellFsUtilMount, (const char *bl
 	{
 		hdd0_mounted = 1;
 		read_cobra_config();
-		do_spoof_patches();
+		//do_spoof_patches();
 		//load_boot_plugins();
 
 		mutex_lock(mutex, 0);

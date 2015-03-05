@@ -801,19 +801,29 @@ extern process_t vsh_process;
 
 process_t get_vsh_process(void);
 
-///////////// NzV BEGIN //////////////
+///////////// NzV END //////////////
 
 extern uint8_t safe_mode;
 
 /* Functions for kernel */
 void modules_patch_init(void);
 void do_spoof_patches(void);
+#if 0
 void load_boot_plugins(void);
+#endif
 int prx_load_vsh_plugin(unsigned int slot, char *path, void *arg, uint32_t arg_size);
 int prx_unload_vsh_plugin(unsigned int slot);
 
+///////////// NzV BEGIN //////////////
+
+int sys_prx_get_vsh_plugin_name(unsigned int slot, char * name);
+
+///////////// NzV END //////////////
+
 /* Syscalls */
+#if 0
 int sys_vsh_spoof_version(char *version_str);
+#endif
 int sys_prx_load_vsh_plugin(unsigned int slot, char *path, void *arg, uint32_t arg_size);
 int sys_prx_unload_vsh_plugin(unsigned int slot);
 int sys_thread_create_ex(sys_ppu_thread_t *thread, void *entry, uint64_t arg, int prio, uint64_t stacksize, uint64_t flags, const char *threadname);

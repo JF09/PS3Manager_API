@@ -112,7 +112,7 @@ uint8_t safe_mode;
 
 static uint32_t caller_process = 0;
 
-static uint8_t condition_true = 1;
+//static uint8_t condition_true = 1;
 uint8_t condition_ps2softemu = 0;
 uint8_t condition_apphome = 0;
 uint8_t condition_disable_gameupdate = 0; // Disabled
@@ -944,7 +944,6 @@ LV2_HOOKED_FUNCTION_PRECALL_SUCCESS_8(int, load_process_hooked, (process_t proce
 	
 	return 0;
 }
-#endif
 
 void do_spoof_patches(void)
 {
@@ -981,6 +980,7 @@ void do_spoof_patches(void)
 		copy_to_user(patch, (void *)(0x10000+spoof_version_patch), sizeof(patch));
 	}
 }
+#endif
 
 // Kernel version of prx_load_vsh_plugin
 int prx_load_vsh_plugin(unsigned int slot, char *path, void *arg, uint32_t arg_size)
@@ -1094,6 +1094,34 @@ int sys_prx_unload_vsh_plugin(unsigned int slot)
 	return prx_unload_vsh_plugin(slot);
 }
 
+//-------------NzV
+int sys_prx_get_vsh_plugin_name(unsigned int slot, char* name)
+{
+	if (slot >= MAX_VSH_PLUGINS) return EINVAL;
+	if (vsh_plugins[slot] == 0) return ENOENT;
+	if (!vsh_process) vsh_process = get_vsh_process(); //NzV
+	if (vsh_process <= 0) return ESRCH;
+	char *filename = alloc(256, 0x35);
+	if (!filename) return ENOMEM;
+	sys_prx_segment_info_t *segments = alloc(sizeof(sys_prx_segment_info_t), 0x35);
+	if (!segments) {dealloc(filename, 0x35); return ENOMEM;}
+	char tmp_name[30];
+	sys_prx_module_info_t modinfo;
+	memset(&modinfo, 0, sizeof(sys_prx_module_info_t));
+	modinfo.filename_size = 256;
+	modinfo.segments_num = 1;
+	int ret = prx_get_module_info(vsh_process, vsh_plugins[slot], &modinfo, filename, segments);
+	if (ret == SUCCEEDED)
+	{
+		sprintf(tmp_name, "%s", modinfo.name);
+		ret = copy_to_user(&tmp_name, get_secure_user_ptr(name), strlen(tmp_name));		
+	}
+	dealloc(filename, 0x35);
+	dealloc(segments, 0x35);
+	return ret;		
+}
+//-------------NzV
+
 #if 0
 static int read_text_line(int fd, char *line, unsigned int size, int *eof)
 {
@@ -1193,7 +1221,7 @@ void load_boot_plugins(void)
 	
 	cellFsClose(fd);
 }
-#endif
+
 
 int sys_vsh_spoof_version(char *version_str)
 {
@@ -1235,6 +1263,8 @@ int sys_vsh_spoof_version(char *version_str)
 	
 	return copy_to_user(rv, p+5, 5);
 }
+
+#endif
 
 #ifdef DEBUG
 LV2_HOOKED_FUNCTION_PRECALL_SUCCESS_8(int, create_process_common_hooked, (process_t parent, uint32_t *pid, int fd, char *path, int r7, uint64_t r8, 

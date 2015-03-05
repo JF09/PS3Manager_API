@@ -568,12 +568,9 @@ LV2_SYSCALL2(int64_t, syscall8, (uint64_t function, uint64_t param1, uint64_t pa
 		case SYSCALL8_OPCODE_AIO_COPY_ROOT:
         case SYSCALL8_OPCODE_DRM_GET_DATA:
         case SYSCALL8_OPCODE_SEND_POWEROFF_EVENT:
-			return ENOSYS;
-
 		case SYSCALL8_OPCODE_VSH_SPOOF_VERSION:
-			return sys_vsh_spoof_version((char *)param1);
+			return ENOSYS;
 		break;
-
 
 		case SYSCALL8_OPCODE_LOAD_VSH_PLUGIN:
 			return sys_prx_load_vsh_plugin(param1, (char *)param2, (void *)param3, param4);
@@ -582,6 +579,12 @@ LV2_SYSCALL2(int64_t, syscall8, (uint64_t function, uint64_t param1, uint64_t pa
 		case SYSCALL8_OPCODE_UNLOAD_VSH_PLUGIN:
 			return sys_prx_unload_vsh_plugin(param1);
 		break;
+		
+///////////// NZV //////////////
+		case SYSCALL8_OPCODE_GET_VSH_PLUGIN_NAME:
+			return sys_prx_get_vsh_plugin_name((unsigned int)param1, (char *)param2);
+		break;
+///////////// NZV //////////////
 
         default:
 		///////////// PS3MAPI BEGIN //////////////
@@ -704,7 +707,7 @@ int main(void)
     modules_patch_init();
     //hook_function_on_precall_success(load_process_symbol, load_process_hooked, 9); //Removed by NzV see bellow.
     //apply_kernel_patches();
-    //map_path_patches(1);
+    map_path_patches(1);
     //storage_ext_patches();
 	
 	///////////// NzV BEGIN //////////////
