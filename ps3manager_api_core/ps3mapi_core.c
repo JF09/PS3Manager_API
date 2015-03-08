@@ -1,5 +1,5 @@
 /*PS3 MANAGER API
- * Copyright (c) 2014 _NzV_.
+ * Copyright (c) 2014-2015 _NzV_.
  *
  * This code is write by _NzV_ <donm7v@gmail.com>.
  * It may be used for any purpose as long as this notice remains intact on all
@@ -275,3 +275,43 @@ int ps3mapi_disable_syscall(int num)
 	*(uint64_t *)MKA(syscall_table_symbol+ 8 * num) = syscall_not_impl;
 	return SUCCEEDED;
 }
+
+//-----------------------------------------------
+//PSID/IDPS
+//-----------------------------------------------
+
+int ps3mapi_get_idps(uint64_t part1, uint64_t part2)
+{
+	if (!PS3MAPI_IDPS_1) return ESRCH;
+	int ret = copy_to_user(&(*(uint64_t *)(PS3MAPI_IDPS_1)), get_secure_user_ptr(part1), sizeof(uint64_t));
+	ret = copy_to_user(&(*(uint64_t *)(PS3MAPI_IDPS_1+8)), get_secure_user_ptr(part2), sizeof(uint64_t));	
+	return ret;
+}
+
+int ps3mapi_set_idps(uint64_t part1, uint64_t part2)
+{
+	if (!PS3MAPI_IDPS_1) return ESRCH;
+	*(uint64_t *)(PS3MAPI_IDPS_1) = part1;
+	*(uint64_t *)(PS3MAPI_IDPS_1+8) = part2;
+	if (!PS3MAPI_IDPS_2) return ESRCH;
+	*(uint64_t *)(PS3MAPI_IDPS_2) = part1;
+	*(uint64_t *)(PS3MAPI_IDPS_2+8) = part2;
+	return SUCCEEDED;
+}
+
+int ps3mapi_get_psid(uint64_t part1, uint64_t part2)
+{
+	if (!PS3MAPI_PSID) return ESRCH;
+	int ret = copy_to_user(&(*(uint64_t *)(PS3MAPI_IDPS_1)), part1, sizeof(uint64_t));	
+	ret = copy_to_user(&(*(uint64_t *)(PS3MAPI_IDPS_1+8)), part2, sizeof(uint64_t));	
+	return ret;
+}
+
+int ps3mapi_set_psid(uint64_t part1, uint64_t part2)
+{
+	if (!PS3MAPI_PSID) return ESRCH;
+	*(uint64_t *)(PS3MAPI_PSID) = part1;
+	*(uint64_t *)(PS3MAPI_PSID+8) = part2;
+	return SUCCEEDED;
+}
+

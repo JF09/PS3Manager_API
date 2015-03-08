@@ -667,6 +667,7 @@ int process_proxy_cmd(uint64_t command, process_t process, uint8_t *buf, uint64_
 	iskernel = (((uint64_t)buf) >> 63);
 	remaining = size;
 
+	if (!vsh_process) vsh_process = get_vsh_process(); //NzV
     if(!vsh_process) return -666;
 
 	do_copy = (iskernel || process != vsh_process);
@@ -2075,6 +2076,7 @@ static INLINE void do_video_mode_patch(void)
 {
 	process_t p = get_current_process_critical();
 
+	if (!vsh_process) vsh_process = get_vsh_process(); //NzV
     if(!vsh_process) return;
 
 	if (p == vsh_process)
@@ -3268,6 +3270,7 @@ int sys_storage_ext_mount_discfile_proxy(sys_event_port_t result_port, sys_event
 	void *table;
 	int ret;
 
+	if (!vsh_process) vsh_process = get_vsh_process(); //NzV
     if(!vsh_process) return EINVAL;
 
 	process = get_current_process();

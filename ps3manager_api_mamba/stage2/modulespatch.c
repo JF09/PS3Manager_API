@@ -1094,34 +1094,6 @@ int sys_prx_unload_vsh_plugin(unsigned int slot)
 	return prx_unload_vsh_plugin(slot);
 }
 
-//-------------NzV
-int sys_prx_get_vsh_plugin_name(unsigned int slot, char* name)
-{
-	if (slot >= MAX_VSH_PLUGINS) return EINVAL;
-	if (vsh_plugins[slot] == 0) return ENOENT;
-	if (!vsh_process) vsh_process = get_vsh_process(); //NzV
-	if (vsh_process <= 0) return ESRCH;
-	char *filename = alloc(256, 0x35);
-	if (!filename) return ENOMEM;
-	sys_prx_segment_info_t *segments = alloc(sizeof(sys_prx_segment_info_t), 0x35);
-	if (!segments) {dealloc(filename, 0x35); return ENOMEM;}
-	char tmp_name[30];
-	sys_prx_module_info_t modinfo;
-	memset(&modinfo, 0, sizeof(sys_prx_module_info_t));
-	modinfo.filename_size = 256;
-	modinfo.segments_num = 1;
-	int ret = prx_get_module_info(vsh_process, vsh_plugins[slot], &modinfo, filename, segments);
-	if (ret == SUCCEEDED)
-	{
-		sprintf(tmp_name, "%s", modinfo.name);
-		ret = copy_to_user(&tmp_name, get_secure_user_ptr(name), strlen(tmp_name));		
-	}
-	dealloc(filename, 0x35);
-	dealloc(segments, 0x35);
-	return ret;		
-}
-//-------------NzV
-
 #if 0
 static int read_text_line(int fd, char *line, unsigned int size, int *eof)
 {
@@ -1306,6 +1278,7 @@ void modules_patch_init(void)
 }
 
 ///////////// PS3MAPI BEGIN //////////////
+
 void unhook_all_modules(void)
 {
 	suspend_intr();
@@ -1319,4 +1292,12 @@ void unhook_all_modules(void)
 	#endif
 	resume_intr();
 }
+
+int ps3mapi_get_vsh_plugin_prxid_by_slot(unsigned int slot, sys_prx_id_t prxid)
+{
+	if (slot >= MAX_VSH_PLUGINS) return EINVAL;
+	if (vsh_plugins[slot] == 0) return ENOENT;
+	return copy_to_user(&vsh_plugins[slot], get_secure_user_ptr(prxid), sizeof(sys_prx_id_t));			
+}
+
 ///////////// PS3MAPI END //////////////
