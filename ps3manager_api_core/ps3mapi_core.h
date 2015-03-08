@@ -346,9 +346,9 @@ int ps3mapi_disable_syscall(int num);
 #define PS3MAPI_OPCODE_GET_PSID 		0x0083
 #define PS3MAPI_OPCODE_SET_PSID			0x0084
 
-int ps3mapi_get_idps(uint64_t part1, uint64_t part2);
+int ps3mapi_get_idps(uint64_t *idps);
 int ps3mapi_set_idps(uint64_t part1, uint64_t part2);
-int ps3mapi_get_psid(uint64_t part1, uint64_t part2);
+int ps3mapi_get_psid(uint64_t *idps);
 int ps3mapi_set_psid(uint64_t part1, uint64_t part2);
 
 #endif /* __PS3MAPI_H__ */

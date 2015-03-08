@@ -280,37 +280,40 @@ int ps3mapi_disable_syscall(int num)
 //PSID/IDPS
 //-----------------------------------------------
 
-int ps3mapi_get_idps(uint64_t part1, uint64_t part2)
+int ps3mapi_get_idps(uint64_t *idps)
 {
 	if (!PS3MAPI_IDPS_1) return ESRCH;
-	int ret = copy_to_user(&(*(uint64_t *)(PS3MAPI_IDPS_1)), get_secure_user_ptr(part1), sizeof(uint64_t));
-	ret = copy_to_user(&(*(uint64_t *)(PS3MAPI_IDPS_1+8)), get_secure_user_ptr(part2), sizeof(uint64_t));	
-	return ret;
+	uint64_t idps_tmp[2];
+	idps_tmp[0] = *(uint64_t *)PS3MAPI_IDPS_1;
+	idps_tmp[1] = *(uint64_t *)(PS3MAPI_IDPS_1+8);
+	return copy_to_user(&idps_tmp, get_secure_user_ptr(idps), sizeof(idps_tmp));	
 }
+
 
 int ps3mapi_set_idps(uint64_t part1, uint64_t part2)
 {
 	if (!PS3MAPI_IDPS_1) return ESRCH;
-	*(uint64_t *)(PS3MAPI_IDPS_1) = part1;
+	*(uint64_t *)PS3MAPI_IDPS_1 = part1;
 	*(uint64_t *)(PS3MAPI_IDPS_1+8) = part2;
 	if (!PS3MAPI_IDPS_2) return ESRCH;
-	*(uint64_t *)(PS3MAPI_IDPS_2) = part1;
+	*(uint64_t *)PS3MAPI_IDPS_2 = part1;
 	*(uint64_t *)(PS3MAPI_IDPS_2+8) = part2;
 	return SUCCEEDED;
 }
 
-int ps3mapi_get_psid(uint64_t part1, uint64_t part2)
+int ps3mapi_get_psid(uint64_t *psid)
 {
 	if (!PS3MAPI_PSID) return ESRCH;
-	int ret = copy_to_user(&(*(uint64_t *)(PS3MAPI_IDPS_1)), part1, sizeof(uint64_t));	
-	ret = copy_to_user(&(*(uint64_t *)(PS3MAPI_IDPS_1+8)), part2, sizeof(uint64_t));	
-	return ret;
+	uint64_t psid_tmp[2];
+	psid_tmp[0] = *(uint64_t *)PS3MAPI_PSID;
+	psid_tmp[1] = *(uint64_t *)(PS3MAPI_PSID+8);
+	return copy_to_user(&psid_tmp, get_secure_user_ptr(psid), sizeof(psid_tmp));	
 }
 
 int ps3mapi_set_psid(uint64_t part1, uint64_t part2)
 {
 	if (!PS3MAPI_PSID) return ESRCH;
-	*(uint64_t *)(PS3MAPI_PSID) = part1;
+	*(uint64_t *)PS3MAPI_PSID = part1;
 	*(uint64_t *)(PS3MAPI_PSID+8) = part2;
 	return SUCCEEDED;
 }

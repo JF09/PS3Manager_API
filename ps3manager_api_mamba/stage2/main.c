@@ -477,13 +477,13 @@ LV2_SYSCALL2(int64_t, syscall8, (uint64_t function, uint64_t param1, uint64_t pa
 				//PSID/IDPS
 				//-----------------------------------------------
 				case PS3MAPI_OPCODE_GET_IDPS:
-					return ps3mapi_get_idps(param2, param3);
+					return ps3mapi_get_idps((uint64_t *)param2);
 				break;
 				case PS3MAPI_OPCODE_SET_IDPS:
 					return ps3mapi_set_idps(param2, param3);
 				break;
 				case PS3MAPI_OPCODE_GET_PSID:
-					return ps3mapi_get_psid(param2, param3);
+					return ps3mapi_get_psid((uint64_t *)param2);
 				break;
 				case PS3MAPI_OPCODE_SET_PSID:
 					return ps3mapi_set_psid(param2, param3);
@@ -782,13 +782,12 @@ int main(void)
 {
     if(!one_time) return 0;
     one_time = 0;
-	
+	if (!vsh_process) vsh_process = get_vsh_process(); //NzV  
     storage_ext_init();
     modules_patch_init();
     //apply_kernel_patches();
     map_path_patches(1);	
-	if (!vsh_process) vsh_process = get_vsh_process(); //NzV
-    if (vsh_process) storage_ext_patches();
+	if (vsh_process) storage_ext_patches();
 	else hook_function_on_precall_success(load_process_symbol, load_process_hooked, 9); //Use old method in case we can not find vsh_process, but their is no reason to this append.
     region_patches();
 	
