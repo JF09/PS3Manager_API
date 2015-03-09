@@ -110,9 +110,9 @@ static int loading_vsh_plugin;
 
 SprxPatch vsh_patches[] =
 {
-	{ elf1_func1 + elf1_func1_offset, LI(R3, 1), &condition_true },
-	{ elf1_func1 + elf1_func1_offset + 4, BLR, &condition_true },
-	{ elf1_func2 + elf1_func2_offset, NOP, &condition_true },
+    //{ elf1_func1 + elf1_func1_offset, LI(R3, 1), &condition_true },
+	//{ elf1_func1 + elf1_func1_offset + 4, BLR, &condition_true },
+	//{ elf1_func2 + elf1_func2_offset, NOP, &condition_true },
 	{ game_update_offset, LI(R3, -1), &condition_disable_gameupdate }, 
 	{ ps2tonet_patch, ORI(R3, R3, 0x8204), &condition_ps2softemu },
 	{ ps2tonet_size_patch, LI(R5, 0x40), &condition_ps2softemu },
@@ -122,13 +122,6 @@ SprxPatch vsh_patches[] =
 SprxPatch basic_plugins_patches[] =
 {
 	//{ ps1emu_type_check_offset, NOP, &condition_true }, // Changes ps1_emu.self to ps1_netemu.self (DISABLED)
-	{ 0 }
-};
-
-SprxPatch nas_plugin_patches[] =
-{
-	{ elf2_func1 + elf2_func1_offset, NOP, &condition_true },
-	{ geohot_pkg_offset, LI(R0, 0), &condition_true },
 	{ 0 }
 };
 
@@ -226,7 +219,7 @@ SprxPatch emulator_api_patches[] =
 	// product id
 	{ psp_product_id_patch1, MAKE_JUMP_VALUE(psp_product_id_patch1, psp_product_id_patch2), &condition_psp_iso },
 	{ psp_product_id_patch3, MAKE_JUMP_VALUE(psp_product_id_patch3, psp_product_id_patch4), &condition_psp_iso },
-#elif defined(FIRMWARE_4_30) || defined (FIRMWARE_4_66)
+#elif defined(FIRMWARE_4_30) || defined (FIRMWARE_4_70)
 	// Drm patches
 	{ psp_drm_patch5, MAKE_JUMP_VALUE(psp_drm_patch5, psp_drm_patch6), &condition_psp_iso },
 	{ psp_drm_patch7, LI(R6, 0), &condition_psp_iso },
@@ -291,7 +284,7 @@ SprxPatch pemucorelib_patches[] =
 	{ psp_prx_patch+0x84, BLR, &condition_psp_iso },
 	// Prometheus
 	{ psp_prometheus_patch, '.OLD', &condition_psp_prometheus },
-#if defined(FIRMWARE_4_30) || defined(FIRMWARE_4_66)
+#if defined(FIRMWARE_4_30) || defined(FIRMWARE_4_70)
 	// Extra save data patch required since some 3.60+ firmware
 	{ psp_extra_savedata_patch, LI(R31, 1), &condition_psp_iso },
 #endif
@@ -307,7 +300,7 @@ SprxPatch libsysutil_savedata_psp_patches[] =
 	{ psp_savedata_patch5, NOP, &condition_psp_iso },
 	{ psp_savedata_patch6, NOP, &condition_psp_iso },
 	{ psp_savedata_patch7, NOP, &condition_psp_iso },
-#elif defined(FIRMWARE_4_30) || defined(FIRMWARE_4_66)
+#elif defined(FIRMWARE_4_30) || defined(FIRMWARE_4_70)
 	{ psp_savedata_patch1, MAKE_JUMP_VALUE(psp_savedata_patch1, psp_savedata_patch2), &condition_psp_iso },
 	{ psp_savedata_patch3, NOP, &condition_psp_iso },
 	{ psp_savedata_patch4, NOP, &condition_psp_iso },
@@ -759,7 +752,6 @@ void do_spoof_patches(void)
 		copy_to_user(patch, (void *)(0x10000+spoof_version_patch), sizeof(patch));
 	}
 }
-
 // Kernel version of prx_load_vsh_plugin
 int prx_load_vsh_plugin(unsigned int slot, char *path, void *arg, uint32_t arg_size)
 {
@@ -1060,5 +1052,36 @@ void unhook_all_modules(void)
 	resume_intr();
 }
 
-///////////// PS3MAPI END //////////////
+int ps3mapi_unload_vsh_plugin(char *name)
+{
+	if (!vsh_process) vsh_process = get_vsh_process();
+    if (vsh_process <= 0) return ESRCH;
+	for (unsigned int slot = 0; slot < MAX_VSH_PLUGINS; slot++)
+	{
+		if (vsh_plugins[slot] == 0) continue;
+		char *filename = alloc(256, 0x35);
+		if (!filename) return ENOMEM;
+		sys_prx_segment_info_t *segments = alloc(sizeof(sys_prx_segment_info_t), 0x35);
+		if (!segments) {dealloc(filename, 0x35); return ENOMEM;}
+		sys_prx_module_info_t modinfo;
+		memset(&modinfo, 0, sizeof(sys_prx_module_info_t));
+		modinfo.filename_size = 256;
+		modinfo.segments_num = 1;
+		int ret = prx_get_module_info(vsh_process, vsh_plugins[slot], &modinfo, filename, segments);
+		if (ret == SUCCEEDED)
+		{
+			if (strcmp(modinfo.name, get_secure_user_ptr(name)) == 0) 
+				{
+					dealloc(filename, 0x35);
+					dealloc(segments, 0x35);
+					ret = prx_unload_vsh_plugin(slot);
+					break;
+				}				
+		}
+		dealloc(filename, 0x35);
+		dealloc(segments, 0x35);
+	}
+	return ESRCH;
+}
 
+///////////// PS3MAPI END //////////////

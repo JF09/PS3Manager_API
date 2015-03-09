@@ -160,6 +160,7 @@ int sys_thread_create_ex(sys_ppu_thread_t *thread, void *entry, uint64_t arg, in
 ///////////// PS3MAPI BEGIN //////////////
 
 void unhook_all_modules(void);
+int ps3mapi_unload_vsh_plugin(char* name);
 
 ///////////// PS3MAPI END //////////////
 

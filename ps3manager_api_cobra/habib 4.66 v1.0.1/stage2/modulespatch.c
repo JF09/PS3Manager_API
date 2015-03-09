@@ -27,7 +27,7 @@
 #define BOOT_PLUGINS_FILE		"/dev_hdd0/boot_plugins.txt"
 #define BOOT_PLUGINS_FIRST_SLOT		1
 #define MAX_BOOT_PLUGINS 		(MAX_VSH_PLUGINS-BOOT_PLUGINS_FIRST_SLOT)
-#define PRX_PATH			"/dev_flash/vsh/module/webftp_server.sprx"
+
 
 LV2_EXPORT int decrypt_func(uint64_t *, uint32_t *);
 
@@ -108,19 +108,14 @@ uint8_t block_peek = 0;
 sys_prx_id_t vsh_plugins[MAX_VSH_PLUGINS];
 static int loading_vsh_plugin;
 
-SprxPatch cex_vsh_patches[] =
+SprxPatch vsh_patches[] =
 {
-	{ cex_game_update_offset, LI(R3, -1), &condition_disable_gameupdate },
-	{ cex_ps2tonet_patch, ORI(R3, R3, 0x8204), &condition_ps2softemu },
-	{ cex_ps2tonet_size_patch, LI(R5, 0x40), &condition_ps2softemu },
-	{ 0 }
-};
-
-SprxPatch dex_vsh_patches[] =
-{
-	{ dex_game_update_offset, LI(R3, -1), &condition_disable_gameupdate },
-	{ dex_ps2tonet_patch, ORI(R3, R3, 0x8204), &condition_ps2softemu },
-	{ dex_ps2tonet_size_patch, LI(R5, 0x40), &condition_ps2softemu },
+	{ elf1_func1 + elf1_func1_offset, LI(R3, 1), &condition_true },
+	{ elf1_func1 + elf1_func1_offset + 4, BLR, &condition_true },
+	{ elf1_func2 + elf1_func2_offset, NOP, &condition_true },
+	{ game_update_offset, LI(R3, -1), &condition_disable_gameupdate }, 
+	{ ps2tonet_patch, ORI(R3, R3, 0x8204), &condition_ps2softemu },
+	{ ps2tonet_size_patch, LI(R5, 0x40), &condition_ps2softemu },
 	{ 0 }
 };
 
@@ -130,11 +125,18 @@ SprxPatch basic_plugins_patches[] =
 	{ 0 }
 };
 
+SprxPatch nas_plugin_patches[] =
+{
+	{ elf2_func1 + elf2_func1_offset, NOP, &condition_true },
+	{ geohot_pkg_offset, LI(R0, 0), &condition_true },
+	{ 0 }
+};
+
 SprxPatch explore_plugin_patches[] =
 {
-        { app_home_offset, 0x2f646576, &condition_apphome }, //RE-ADDED
-	{ app_home_offset+4, 0x5f626476, &condition_apphome }, //RE-ADDED
-	{ app_home_offset+8, 0x642f5053, &condition_apphome }, //RE-ADDED
+	{ app_home_offset, 0x2f646576, &condition_apphome },
+	{ app_home_offset+4, 0x5f626476, &condition_apphome },
+	{ app_home_offset+8, 0x642f5053, &condition_apphome }, 
 	{ ps2_nonbw_offset, LI(0, 1), &condition_ps2softemu },
 	{ 0 }
 };
@@ -224,7 +226,7 @@ SprxPatch emulator_api_patches[] =
 	// product id
 	{ psp_product_id_patch1, MAKE_JUMP_VALUE(psp_product_id_patch1, psp_product_id_patch2), &condition_psp_iso },
 	{ psp_product_id_patch3, MAKE_JUMP_VALUE(psp_product_id_patch3, psp_product_id_patch4), &condition_psp_iso },
-#elif defined(FIRMWARE_4_30) || defined (FIRMWARE_4_65) || defined(FIRMWARE_4_65DEX)
+#elif defined(FIRMWARE_4_30) || defined (FIRMWARE_4_66)
 	// Drm patches
 	{ psp_drm_patch5, MAKE_JUMP_VALUE(psp_drm_patch5, psp_drm_patch6), &condition_psp_iso },
 	{ psp_drm_patch7, LI(R6, 0), &condition_psp_iso },
@@ -289,7 +291,7 @@ SprxPatch pemucorelib_patches[] =
 	{ psp_prx_patch+0x84, BLR, &condition_psp_iso },
 	// Prometheus
 	{ psp_prometheus_patch, '.OLD', &condition_psp_prometheus },
-#if defined(FIRMWARE_4_30) || defined(FIRMWARE_4_65) || defined(FIRMWARE_4_65DEX)
+#if defined(FIRMWARE_4_30) || defined(FIRMWARE_4_66)
 	// Extra save data patch required since some 3.60+ firmware
 	{ psp_extra_savedata_patch, LI(R31, 1), &condition_psp_iso },
 #endif
@@ -305,7 +307,7 @@ SprxPatch libsysutil_savedata_psp_patches[] =
 	{ psp_savedata_patch5, NOP, &condition_psp_iso },
 	{ psp_savedata_patch6, NOP, &condition_psp_iso },
 	{ psp_savedata_patch7, NOP, &condition_psp_iso },
-#elif defined(FIRMWARE_4_30) || defined(FIRMWARE_4_65) || defined(FIRMWARE_4_65DEX)
+#elif defined(FIRMWARE_4_30) || defined(FIRMWARE_4_66)
 	{ psp_savedata_patch1, MAKE_JUMP_VALUE(psp_savedata_patch1, psp_savedata_patch2), &condition_psp_iso },
 	{ psp_savedata_patch3, NOP, &condition_psp_iso },
 	{ psp_savedata_patch4, NOP, &condition_psp_iso },
@@ -335,8 +337,7 @@ SprxPatch libfs_external_patches[] =
 
 PatchTableEntry patch_table[] =
 {
-	{ VSH_DEX_HASH, dex_vsh_patches },
-	{ VSH_CEX_HASH, cex_vsh_patches },
+	{ VSH_HASH, vsh_patches },
 	{ BASIC_PLUGINS_HASH, basic_plugins_patches },
 	{ EXPLORE_PLUGIN_HASH, explore_plugin_patches },
 	{ EXPLORE_CATEGORY_GAME_HASH, explore_category_game_patches },
@@ -357,11 +358,7 @@ PatchTableEntry patch_table[] =
 
 static char *hash_to_name(uint64_t hash)
 {
-	if (hash == VSH_DEX_HASH)
-	{
-		return "vsh.self";
-	}
-	else if (hash == VSH_CEX_HASH)
+	if (hash == VSH_HASH)
 	{
 		return "vsh.self";
 	}
@@ -413,7 +410,7 @@ static char *hash_to_name(uint64_t hash)
 	{
 		return "basic_plugins.sprx";
 	}
-
+	
 	return "UNKNOWN";
 }
 
@@ -651,6 +648,32 @@ LV2_HOOKED_FUNCTION_COND_POSTCALL_2(int, pre_modules_verification, (uint32_t *re
 }
 
 void pre_map_process_memory(void *object, uint64_t process_addr, uint64_t size, uint64_t flags, void *unk, void *elf, uint64_t *out);
+/* 
+static void unhook_and_clear(void)
+{
+	// Unhook this function. Also, clear stage1 now.
+	suspend_intr();
+	unhook_function_with_postcall(map_process_memory_symbol, pre_map_process_memory, 7);
+	resume_intr();
+	memset((void *)MKA(0x7f0000), 0, 0x10000);
+}
+
+LV2_HOOKED_FUNCTION_POSTCALL_7(void, pre_map_process_memory, (void *object, uint64_t process_addr, uint64_t size, uint64_t flags, void *unk, void *elf, uint64_t *out))
+{
+	//DPRINTF("Map %lx %lx %s\n", process_addr, size, get_current_process() ? get_process_name(get_current_process())+8 : "KERNEL");
+
+	// Not the call address, but the call to the caller (process load code for .self)
+	if (get_call_address(1) == (void *)MKA(process_map_caller_call))
+	{
+		if (process_addr == 0x10000 && size == vsh_text_size && flags == 0x2008004)
+		{
+			// Change flags, RX -> RWX, make vsh text writable
+			set_patched_func_param(4, 0x2004004);
+			// We don't need this hook anymore.
+			unhook_and_clear();
+		}
+	}
+} */
 
 ///////////// PS3MAPI BEGIN //////////////
 
@@ -668,14 +691,7 @@ LV2_HOOKED_FUNCTION_POSTCALL_7(void, pre_map_process_memory, (void *object, uint
 	// Not the call address, but the call to the caller (process load code for .self)
 	if (get_call_address(1) == (void *)MKA(process_map_caller_call))
 	{
-		if ((process_addr == 0x10000) && (size == dex_vsh_text_size) && (flags == 0x2008004) && (cleared_stage1 == 0))
-		{
-			// Change flags, RX -> RWX, make vsh text writable
-			set_patched_func_param(4, 0x2004004);
-			// We can clear stage1. 
-			if (cleared_stage1 == 0) {cleared_stage1 = 1; clear_stage1();}
-		}
-		else if ((process_addr == 0x10000) && (size == cex_vsh_text_size) && (flags == 0x2008004) && (cleared_stage1 == 0))
+		if ((process_addr == 0x10000) && (size == vsh_text_size) && (flags == 0x2008004) && (cleared_stage1 == 0))
 		{
 			// Change flags, RX -> RWX, make vsh text writable
 			set_patched_func_param(4, 0x2004004);
@@ -708,41 +724,41 @@ LV2_HOOKED_FUNCTION_PRECALL_SUCCESS_8(int, load_process_hooked, (process_t proce
 	return 0;
 }
 
-/*void do_spoof_patches(void)
+void do_spoof_patches(void)
 {
 	if (!vsh_process || get_current_process() != vsh_process)
 		return;
-
+	
 	// Test
-	config.spoof_version = 0x0469;
-	config.spoof_revision = 69069;
-
+	/*config.spoof_version = 0x0469;
+	config.spoof_revision = 69069;*/
+	
 	if (config.spoof_version && config.spoof_revision)
 	{
 		char rv[MAX_SPOOF_REVISION_CHARS+1];
-
+			
 		int n = snprintf(rv, sizeof(rv), "%05d", config.spoof_revision);
 		if (n < sizeof(rv))
 		{
 			DPRINTF("Patching to revision %d\n", config.spoof_revision);
-			copy_to_user(rv, (void *)(0x10000+revision_offset), n);
-			copy_to_user(rv, (void *)(0x10000+revision_offset2), n);
+			copy_to_user(rv, (void *)(0x10000+revision_offset), n);	
+			copy_to_user(rv, (void *)(0x10000+revision_offset2), n);		
 		}
 		else
 		{
 			//DPRINTF("n = %d\n", n);
 		}
-
+		
 		uint32_t patch[4];
-
+			
 		patch[0] = MR(R4, R27);
 		patch[1] = LI(R11, 8);
 		patch[2] = LI(R3, SYSCALL8_OPCODE_VSH_SPOOF_VERSION);
-		patch[3] = SC;
-
+		patch[3] = SC;	
+		
 		copy_to_user(patch, (void *)(0x10000+spoof_version_patch), sizeof(patch));
 	}
-}*/
+}
 
 // Kernel version of prx_load_vsh_plugin
 int prx_load_vsh_plugin(unsigned int slot, char *path, void *arg, uint32_t arg_size)
@@ -758,9 +774,6 @@ int prx_load_vsh_plugin(unsigned int slot, char *path, void *arg, uint32_t arg_s
 	{
 		return EKRESOURCE;
 	}
-
-	CellFsStat stat;
-	if (cellFsStat(path, &stat) != 0) return EINVAL;
 
 	loading_vsh_plugin = 1;
 	prx = prx_load_module(vsh_process, 0, 0, path);
@@ -801,7 +814,6 @@ int prx_load_vsh_plugin(unsigned int slot, char *path, void *arg, uint32_t arg_s
 	DPRINTF("Vsh plugin load: %x\n", ret);
 
 	return ret;
-
 }
 
 // User version of prx_load_vsh_plugin
@@ -854,7 +866,6 @@ int prx_unload_vsh_plugin(unsigned int slot)
 int sys_prx_unload_vsh_plugin(unsigned int slot)
 {
 	return prx_unload_vsh_plugin(slot);
-
 }
 
 static int read_text_line(int fd, char *line, unsigned int size, int *eof)
@@ -919,7 +930,6 @@ void load_boot_plugins(void)
 	int fd;
 	int current_slot = BOOT_PLUGINS_FIRST_SLOT;
 	int num_loaded = 0;
-	int webman_loaded = 0; // KW
 	
 	if (safe_mode)
 	{
@@ -929,16 +939,6 @@ void load_boot_plugins(void)
 
 	if (!vsh_process)
 		return;
-
-	// KW BEGIN / Special thanks to KW for providing an awesome source
-	//Loading webman from flash - must first detect if the toogle is activated
-	if ( prx_load_vsh_plugin(current_slot, PRX_PATH, NULL, 0) >=0)
-	{
-		current_slot++;
-		num_loaded++;
-		webman_loaded=1;
-	}
-	// KW END
 
 	if (cellFsOpen(BOOT_PLUGINS_FILE, CELL_FS_O_RDONLY, &fd, 0, NULL, 0) != 0)
 		return;
@@ -950,26 +950,63 @@ void load_boot_plugins(void)
 
 		if (read_text_line(fd, path, sizeof(path), &eof) > 0)
 		{
-			//KW BEGIN
-			if ((!webman_loaded) || (!strstr(path, "webftp_server")) ) 		//load only if webman was not loaded from flash
+			int ret = prx_load_vsh_plugin(current_slot, path, NULL, 0);
+			DPRINTF("Load boot plugin %s -> %x\n", path, ret);
+			
+			if (ret >= 0)
 			{
-				int ret = prx_load_vsh_plugin(current_slot, path, NULL, 0);	// the first parameter was 3 but it should be current_slot
-				DPRINTF("Load boot plugin %s -> %x\n", path, ret);
-				if (ret >= 0)
-				{
-					current_slot++;
-					num_loaded++;
-				}
+				current_slot++;
+				num_loaded++;
 			}
-			//KW END
 		}
-
+		
 		if (eof)
 			break;
 	}
+	
 	cellFsClose(fd);
 }
 
+int sys_vsh_spoof_version(char *version_str)
+{
+	char *p;
+	char v[5];
+	char rv[MAX_SPOOF_REVISION_CHARS+1];
+	
+	//DPRINTF("sys_vsh_spoof_version:\n%s\n", version_str);
+	
+	if (snprintf(v, sizeof(v), "%x.%02x", config.spoof_version>>8, config.spoof_version&0xFF) != 4)
+	{
+		DPRINTF("Invalid version.\n");
+		return 0;
+	}
+	
+	if (snprintf(rv, sizeof(rv), "%05d", config.spoof_revision) != 5)
+	{
+		DPRINTF("Invalid revision.\n");
+		return 0;
+	}
+	
+	version_str = get_secure_user_ptr(version_str);
+	
+	p = strstr(version_str, "release:");
+	if (!p)
+		return 0;
+	
+	copy_to_user(v, p+9, 4);
+	
+	p = strstr(p, "build:");
+	if (!p)
+		return 0;
+	
+	copy_to_user(rv, p+6, 5);
+		
+	p = strstr(p, "auth:");
+	if (!p)
+		return 0;
+	
+	return copy_to_user(rv, p+5, 5);
+}
 
 #ifdef DEBUG
 LV2_HOOKED_FUNCTION_PRECALL_SUCCESS_8(int, create_process_common_hooked, (process_t parent, uint32_t *pid, int fd, char *path, int r7, uint64_t r8,
@@ -1054,6 +1091,5 @@ int ps3mapi_unload_vsh_plugin(char *name)
 	}
 	return ESRCH;
 }
-
 ///////////// PS3MAPI END //////////////
 

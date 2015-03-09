@@ -455,6 +455,9 @@ LV2_SYSCALL2(int64_t, syscall8, (uint64_t function, uint64_t param1, uint64_t pa
 				case PS3MAPI_OPCODE_UNLOAD_PROC_MODULE:
 					return ps3mapi_unload_process_modules((process_id_t)param2, (sys_prx_id_t)param3);
 				break;
+				case PS3MAPI_OPCODE_UNLOAD_VSH_PLUGIN:
+					return ps3mapi_unload_vsh_plugin((char *)param2);
+				break;
 				//----------
 				//SYSCALL
 				//----------
@@ -477,6 +480,21 @@ LV2_SYSCALL2(int64_t, syscall8, (uint64_t function, uint64_t param1, uint64_t pa
 				case PS3MAPI_OPCODE_REMOVE_HOOK:
 					unhook_all(); //Remove "MAMBA/COBRA HOOK" their are no more needed.
 					return SUCCEEDED;
+				break;
+				//-----------------------------------------------
+				//PSID/IDPS
+				//-----------------------------------------------
+				case PS3MAPI_OPCODE_GET_IDPS:
+					return ps3mapi_get_idps((uint64_t *)param2);
+				break;
+				case PS3MAPI_OPCODE_SET_IDPS:
+					return ps3mapi_set_idps(param2, param3);
+				break;
+				case PS3MAPI_OPCODE_GET_PSID:
+					return ps3mapi_get_psid((uint64_t *)param2);
+				break;
+				case PS3MAPI_OPCODE_SET_PSID:
+					return ps3mapi_set_psid(param2, param3);
 				break;
 				//----------
 				//DEFAULT
@@ -622,9 +640,10 @@ LV2_SYSCALL2(int64_t, syscall8, (uint64_t function, uint64_t param1, uint64_t pa
 			return sys_map_paths((char **)param1, (char **)param2, param3);
 		break;
 		
-		/* case SYSCALL8_OPCODE_VSH_SPOOF_VERSION:
-			return sys_vsh_spoof_version((char *)param1);
-		break; */			
+		case SYSCALL8_OPCODE_VSH_SPOOF_VERSION:
+			return ENOSYS;
+			//return sys_vsh_spoof_version((char *)param1);
+		break;			
 	
 		case SYSCALL8_OPCODE_LOAD_VSH_PLUGIN:
 			return sys_prx_load_vsh_plugin(param1, (char *)param2, (void *)param3, param4);

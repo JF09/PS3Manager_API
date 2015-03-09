@@ -75,6 +75,10 @@
 #define FIRMWARE_VERSION	0x0465
 #elif defined(FIRMWARE_4_65DEX)
 #define FIRMWARE_VERSION	0x0465
+#elif defined(FIRMWARE_4_66)
+#define FIRMWARE_VERSION	0x0466
+#elif defined(FIRMWARE_4_70)
+#define FIRMWARE_VERSION	0x0470
 #endif
 
 #if defined(CFW)
@@ -331,6 +335,7 @@ int partial_disable_syscall8 = 0;
 
 
 
+
 LV2_SYSCALL2(int64_t, syscall8, (uint64_t function, uint64_t param1, uint64_t param2, uint64_t param3, uint64_t param4, uint64_t param5, uint64_t param6, uint64_t param7))
 {
 	static uint32_t pid_blocked = 0;
@@ -369,7 +374,24 @@ LV2_SYSCALL2(int64_t, syscall8, (uint64_t function, uint64_t param1, uint64_t pa
 		pid_blocked = pid;
 		return ENOSYS;
 	}
-		
+	///////////////////////////////////// PS3MAPI BEGIN //////////////
+	if (3 <= partial_disable_syscall8)
+	{
+		if (function == SYSCALL8_OPCODE_PS3MAPI)
+		{
+			if ((int)param1 == PS3MAPI_OPCODE_PDISABLE_SYSCALL8)
+			{
+				partial_disable_syscall8 = (int)param2;
+				return SUCCEEDED;
+			}
+			else if ((int)param1 == PS3MAPI_OPCODE_PCHECK_SYSCALL8)
+			{
+				return partial_disable_syscall8;
+			}
+			else return ENOSYS;
+		}
+		else return ENOSYS;
+	}		
 	switch (function)
 	{       	
 		case SYSCALL8_OPCODE_PS3MAPI:	
@@ -622,7 +644,8 @@ LV2_SYSCALL2(int64_t, syscall8, (uint64_t function, uint64_t param1, uint64_t pa
 		
 		case SYSCALL8_OPCODE_VSH_SPOOF_VERSION:
 			return ENOSYS;
-			//return sys_vsh_spoof_version((char *)param1);
+			//return sys_vsh_spoof_version((char *)param1); //KW changes
+			//KW stealth extensions NOT COMPATIBLE WITH SYSCALL8_OPCODE_VSH_SPOOF_VERSION (cobra version spoofer).
 		break;			
 	
 		case SYSCALL8_OPCODE_LOAD_VSH_PLUGIN:
@@ -660,7 +683,6 @@ LV2_SYSCALL2(int64_t, syscall8, (uint64_t function, uint64_t param1, uint64_t pa
 		///////////// PS3MAPI BEGIN //////////////
 			if (1 <= partial_disable_syscall8)	return ENOSYS;
 		///////////// PS3MAPI END //////////////
-			
 			if (extended_syscall8.addr)
 			{
 				// Lets handle a few hermes opcodes ourself, and let their payload handle the rest
