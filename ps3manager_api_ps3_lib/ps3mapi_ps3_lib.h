@@ -11,7 +11,7 @@
 
 #define SYSCALL8_OPCODE_PS3MAPI			 		0x7777
 
-#define PS3MAPI_PS3_LIB_VERSION					0x0111
+#define PS3MAPI_PS3_LIB_VERSION					0x0120
 
 #define PS3MAPI_CORE_MINVERSION					0x0111
 
@@ -128,11 +128,13 @@ int ps3mapi_get_process_mem(process_id_t pid, uint64_t addr, char *buf, int size
 #define PS3MAPI_OPCODE_GET_PROC_MODULE_FILENAME		0x0043
 #define PS3MAPI_OPCODE_LOAD_PROC_MODULE				0x0044
 #define PS3MAPI_OPCODE_UNLOAD_PROC_MODULE			0x0045
+#define PS3MAPI_OPCODE_GET_VSH_PLUGIN_PRXID_BY_SLOT	0x0046
 
 int ps3mapi_get_all_process_modules_prx_id(process_id_t pid, sys_prx_id_t *prx_id_list);
 int ps3mapi_get_process_module_name_by_prx_id(process_id_t pid, sys_prx_id_t prx_id, char *name);
 int ps3mapi_get_process_module_filename_by_prx_id(process_id_t pid, sys_prx_id_t prx_id, char *filename);
 int ps3mapi_load_process_modules(process_id_t pid, char *path, void *arg, uint32_t arg_size);
+int ps3mapi_unload_process_modules(process_id_t pid, sys_prx_id_t prx_id);
 int ps3mapi_unload_process_modules(process_id_t pid, sys_prx_id_t prx_id);
 
 //-----------------------------------------------
@@ -148,6 +150,20 @@ int ps3mapi_check_syscall(int num);
 int ps3mapi_disable_syscall(int num);
 int ps3mapi_pdisable_syscall8(int mode);
 int ps3mapi_pcheck_syscall8();
+
+//-----------------------------------------------
+//PSID/IDPS
+//-----------------------------------------------
+
+#define PS3MAPI_OPCODE_GET_IDPS 		0x0081
+#define PS3MAPI_OPCODE_SET_IDPS 		0x0082
+#define PS3MAPI_OPCODE_GET_PSID 		0x0083
+#define PS3MAPI_OPCODE_SET_PSID			0x0084
+
+int ps3mapi_get_idps(uint64_t *idps);
+int ps3mapi_set_idps(uint64_t part1, uint64_t part2);
+int ps3mapi_get_psid(uint64_t *psid);
+int ps3mapi_set_psid(uint64_t part1, uint64_t part2);
 
 //-----------------------------------------------
 //REMOVE COBRA/MAMBA HOOK

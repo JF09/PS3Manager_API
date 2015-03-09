@@ -125,6 +125,11 @@ int ps3mapi_unload_process_modules(process_id_t pid, sys_prx_id_t prx_id)
 	return_to_user_prog(int);						
 }
 
+int ps3mapi_unload_process_modules(process_id_t pid, sys_prx_id_t prx_id)
+{
+	system_call_4(8, SYSCALL8_OPCODE_PS3MAPI, PS3MAPI_OPCODE_GET_VSH_PLUGIN_PRXID_BY_SLOT, (uint64_t)pid, (uint64_t)prx_id);
+	return_to_user_prog(int);						
+}
 //-----------------------------------------------
 //CLEAN SYSCALL
 //-----------------------------------------------
@@ -150,6 +155,34 @@ int ps3mapi_pdisable_syscall8(int mode)
 int ps3mapi_pcheck_syscall8()
 {
 	system_call_2(8, SYSCALL8_OPCODE_PS3MAPI, PS3MAPI_OPCODE_PCHECK_SYSCALL8);
+	return_to_user_prog(int);						
+}
+
+//-----------------------------------------------
+//PSID/IDPS
+//-----------------------------------------------
+
+int ps3mapi_get_idps(uint64_t *idps);
+{
+	system_call_3(8, SYSCALL8_OPCODE_PS3MAPI, PS3MAPI_OPCODE_GET_IDPS, (uint64_t)idps);
+	return_to_user_prog(int);						
+}
+
+int ps3mapi_set_idps(uint64_t part1, uint64_t part2);
+{
+	system_call_4(8, SYSCALL8_OPCODE_PS3MAPI, PS3MAPI_OPCODE_SET_IDPS, (uint64_t)part1, (uint64_t)part2);
+	return_to_user_prog(int);						
+}
+
+int ps3mapi_get_psid(uint64_t *psid);
+{
+	system_call_3(8, SYSCALL8_OPCODE_PS3MAPI, PS3MAPI_OPCODE_GET_PSID, (uint64_t)psid);
+	return_to_user_prog(int);						
+}
+
+int ps3mapi_set_psid(uint64_t part1, uint64_t part2);
+{
+	system_call_4(8, SYSCALL8_OPCODE_PS3MAPI, PS3MAPI_OPCODE_SET_PSID, (uint64_t)part1, (uint64_t)part2);
 	return_to_user_prog(int);						
 }
 //-----------------------------------------------
