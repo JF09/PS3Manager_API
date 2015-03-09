@@ -883,14 +883,6 @@ void pre_map_process_memory(void *object, uint64_t process_addr, uint64_t size, 
 
 ///////////// PS3MAPI BEGIN //////////////
 
-/* static void unhook_and_clear(void)
-{
-	// Unhook this function. Also, clear stage1 now.
-	suspend_intr();
-	unhook_function_with_postcall(map_process_memory_symbol, pre_map_process_memory, 7);	
-	resume_intr();
-	memset((void *)MKA(0x7f0000), 0, 0x10000);
-} */
 
 LV2_HOOKED_FUNCTION_POSTCALL_7(void, pre_map_process_memory, (void *object, uint64_t process_addr, uint64_t size, uint64_t flags, void *unk, void *elf, uint64_t *out))
 {
@@ -947,9 +939,9 @@ LV2_HOOKED_FUNCTION_PRECALL_SUCCESS_8(int, load_process_hooked, (process_t proce
 
 void do_spoof_patches(void)
 {
+	if (!vsh_process) vsh_process = get_vsh_process();
 	if (!vsh_process || get_current_process() != vsh_process)
 		return;
-	
 	// Test
 	/*config.spoof_version = 0x0469;
 	config.spoof_revision = 69069;*/
@@ -1163,12 +1155,11 @@ void load_boot_plugins(void)
 		cellFsUnlink(BOOT_PLUGINS_FILE);
 		return;
 	}
+	if (!vsh_process) vsh_process = get_vsh_process(); //NzV
+    
+	if (!vsh_process) return;
 	
-	if (!vsh_process)
-		return;
-	
-	if (cellFsOpen(BOOT_PLUGINS_FILE, CELL_FS_O_RDONLY, &fd, 0, NULL, 0) != 0)
-		return;
+	if (cellFsOpen(BOOT_PLUGINS_FILE, CELL_FS_O_RDONLY, &fd, 0, NULL, 0) != 0) return;
 	
 	while (num_loaded < MAX_BOOT_PLUGINS)
 	{
@@ -1293,11 +1284,36 @@ void unhook_all_modules(void)
 	resume_intr();
 }
 
-int ps3mapi_get_vsh_plugin_prxid_by_slot(unsigned int slot, sys_prx_id_t prxid)
+int ps3mapi_unload_vsh_plugin(char *name)
 {
-	if (slot >= MAX_VSH_PLUGINS) return EINVAL;
-	if (vsh_plugins[slot] == 0) return ENOENT;
-	return copy_to_user(&vsh_plugins[slot], get_secure_user_ptr(prxid), sizeof(sys_prx_id_t));			
+	if (!vsh_process) vsh_process = get_vsh_process();
+    if (vsh_process <= 0) return ESRCH;
+	for (unsigned int slot = 0; slot < MAX_VSH_PLUGINS; slot++)
+	{
+		if (vsh_plugins[slot] == 0) continue;
+		char *filename = alloc(256, 0x35);
+		if (!filename) return ENOMEM;
+		sys_prx_segment_info_t *segments = alloc(sizeof(sys_prx_segment_info_t), 0x35);
+		if (!segments) {dealloc(filename, 0x35); return ENOMEM;}
+		sys_prx_module_info_t modinfo;
+		memset(&modinfo, 0, sizeof(sys_prx_module_info_t));
+		modinfo.filename_size = 256;
+		modinfo.segments_num = 1;
+		int ret = prx_get_module_info(vsh_process, vsh_plugins[slot], &modinfo, filename, segments);
+		if (ret == SUCCEEDED)
+		{
+			if (strcmp(modinfo.name, get_secure_user_ptr(name)) == 0) 
+				{
+					dealloc(filename, 0x35);
+					dealloc(segments, 0x35);
+					ret = prx_unload_vsh_plugin(slot);
+					break;
+				}				
+		}
+		dealloc(filename, 0x35);
+		dealloc(segments, 0x35);
+	}
+	return ESRCH;
 }
 
 ///////////// PS3MAPI END //////////////

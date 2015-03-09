@@ -125,11 +125,12 @@ int ps3mapi_unload_process_modules(process_id_t pid, sys_prx_id_t prx_id)
 	return_to_user_prog(int);						
 }
 
-int ps3mapi_unload_process_modules(process_id_t pid, sys_prx_id_t prx_id)
+int ps3mapi_unload_vsh_plugin(char *name)
 {
-	system_call_4(8, SYSCALL8_OPCODE_PS3MAPI, PS3MAPI_OPCODE_GET_VSH_PLUGIN_PRXID_BY_SLOT, (uint64_t)pid, (uint64_t)prx_id);
+	system_call_4(8, SYSCALL8_OPCODE_PS3MAPI, PS3MAPI_OPCODE_UNLOAD_VSH_PLUGIN, (uint64_t)name);
 	return_to_user_prog(int);						
 }
+
 //-----------------------------------------------
 //CLEAN SYSCALL
 //-----------------------------------------------

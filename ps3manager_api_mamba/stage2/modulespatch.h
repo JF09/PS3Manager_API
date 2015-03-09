@@ -51,12 +51,6 @@ void load_boot_plugins(void);
 int prx_load_vsh_plugin(unsigned int slot, char *path, void *arg, uint32_t arg_size);
 int prx_unload_vsh_plugin(unsigned int slot);
 
-///////////// NzV BEGIN //////////////
-
-int sys_prx_get_vsh_plugin_name(unsigned int slot, char * name);
-
-///////////// NzV END //////////////
-
 /* Syscalls */
 #if 0
 int sys_vsh_spoof_version(char *version_str);
@@ -68,7 +62,7 @@ int sys_thread_create_ex(sys_ppu_thread_t *thread, void *entry, uint64_t arg, in
 ///////////// PS3MAPI END //////////////
 
 void unhook_all_modules(void);
-int ps3mapi_get_vsh_plugin_prxid_by_slot(unsigned int slot, sys_prx_id_t prxid);
+int ps3mapi_unload_vsh_plugin(char* name);
 
 ///////////// PS3MAPI END //////////////
 

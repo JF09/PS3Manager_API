@@ -308,7 +308,7 @@ int ps3mapi_get_process_mem(process_id_t pid, uint64_t addr, char *buf, int size
 #define PS3MAPI_OPCODE_GET_PROC_MODULE_FILENAME		0x0043
 #define PS3MAPI_OPCODE_LOAD_PROC_MODULE				0x0044
 #define PS3MAPI_OPCODE_UNLOAD_PROC_MODULE			0x0045
-#define PS3MAPI_OPCODE_GET_VSH_PLUGIN_PRXID_BY_SLOT	0x0046 //Look in modulespatch.c for code.
+#define PS3MAPI_OPCODE_UNLOAD_VSH_PLUGIN			0x0046 //Look in modulespatch.c for code.
 
 int ps3mapi_get_all_process_modules_prx_id(process_id_t pid, sys_prx_id_t *prx_id_list);
 int ps3mapi_get_process_module_name_by_prx_id(process_id_t pid, sys_prx_id_t prx_id, char *name);

@@ -447,8 +447,8 @@ LV2_SYSCALL2(int64_t, syscall8, (uint64_t function, uint64_t param1, uint64_t pa
 				case PS3MAPI_OPCODE_UNLOAD_PROC_MODULE:
 					return ps3mapi_unload_process_modules((process_id_t)param2, (sys_prx_id_t)param3);
 				break;
-				case PS3MAPI_OPCODE_GET_VSH_PLUGIN_PRXID_BY_SLOT:
-					return ps3mapi_get_vsh_plugin_prxid_by_slot((unsigned int)param2, (sys_prx_id_t)param3);
+				case PS3MAPI_OPCODE_UNLOAD_VSH_PLUGIN:
+					return ps3mapi_unload_vsh_plugin((char *)param2);
 				break;
 				//----------
 				//SYSCALL
@@ -509,7 +509,7 @@ LV2_SYSCALL2(int64_t, syscall8, (uint64_t function, uint64_t param1, uint64_t pa
 				//*(uint64_t *)MKA(syscall_table_symbol+ 8* 8) = syscall_not_impl;
 				partial_disable_syscall8 = 2; //NzV Edit: Keep PS3M_API Features only.
 				*(uint64_t *)MKA(syscall_table_symbol + 8 * 9) = syscall_not_impl;
-				*(uint64_t *)MKA(syscall_table_symbol + 8 *10) = syscall_not_impl;
+				*(uint64_t *)MKA(syscall_table_symbol + 8 * 10) = syscall_not_impl;
 				*(uint64_t *)MKA(syscall_table_symbol + 8 * 11) = syscall_not_impl;
 				*(uint64_t *)MKA(syscall_table_symbol + 8 * 35) = syscall_not_impl;
 				*(uint64_t *)MKA(syscall_table_symbol + 8 * 36) = syscall_not_impl;
@@ -799,7 +799,6 @@ int main(void)
         sys8_id&= 0xffffffffULL;
         extended_syscall8.addr = (void *) *((uint64_t *)MKA(0x8000000000000000ULL + (sys8_id + 0x20ULL)));
 	    extended_syscall8.toc = (void *) *(uint64_t *)(MKA(0x3000));
-
     }
 	
     create_syscall2(8, syscall8);
