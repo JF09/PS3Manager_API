@@ -450,6 +450,9 @@ LV2_SYSCALL2(int64_t, syscall8, (uint64_t function, uint64_t param1, uint64_t pa
 				case PS3MAPI_OPCODE_UNLOAD_VSH_PLUGIN:
 					return ps3mapi_unload_vsh_plugin((char *)param2);
 				break;
+				case PS3MAPI_OPCODE_GET_VSH_PLUGIN_INFO:
+					return ps3mapi_get_vsh_plugin_info((unsigned int)param2, (char *)param3, (char *)param4);
+				break;
 				//----------
 				//SYSCALL
 				//----------
@@ -786,10 +789,10 @@ int main(void)
     storage_ext_init();
     modules_patch_init();
     //apply_kernel_patches();
-    map_path_patches(1);	
-	if (vsh_process) storage_ext_patches();
+    if (vsh_process) storage_ext_patches();
 	else hook_function_on_precall_success(load_process_symbol, load_process_hooked, 9); //Use old method in case we can not find vsh_process, but their is no reason to this append.
-    region_patches();
+    map_path_patches(1);	
+	region_patches();
 	
 	map_path("/app_home", "/dev_usb000", 0);
 	

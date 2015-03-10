@@ -194,16 +194,17 @@ int sys_map_paths(char *paths[], char *new_paths[], unsigned int num)
 	return ret;
 }
 
-LV2_HOOKED_FUNCTION_POSTCALL_2(void, open_path_hook, (char *path, int mode))
+LV2_HOOKED_FUNCTION_POSTCALL_2(void, open_path_hook, (char *path0, int mode))
 {
-	if (path)
+	if (path0[0]=='/')
 	{
+		char *path=path0;
+		if(path[1]=='/') path++;
 		for (int i = MAX_TABLE_ENTRIES-1; i >= 0; i--)
 		{
 			if (map_table[i].oldpath)
 			{
 				int len = strlen(map_table[i].oldpath);
-
 				if (path && strncmp(path, map_table[i].oldpath, len) == 0)
 				{
 					// Removed (protection of "lambda.db"), not needed anymore

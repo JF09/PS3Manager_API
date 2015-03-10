@@ -31,7 +31,8 @@
 	#define PS3MAPI_IDPS_1			 			0x80000000003BA880ULL
 	#define PS3MAPI_IDPS_2			 			0x800000000044A174ULL
 	#define PS3MAPI_PSID			 			0x800000000044A18CULL
-#elif defined(FIRMWARE_3_55DEX)
+#endif
+#if defined(FIRMWARE_3_55DEX)
 	#define PS3MAPI_FW_VERSION			 		0x0355
 	#if defined(IS_MAMBA)
 		#define PS3MAPI_FW_TYPE			 		"DEX MAMBA"
@@ -41,7 +42,8 @@
 	#define PS3MAPI_IDPS_1			 			0x80000000003DE170ULL
 	#define PS3MAPI_IDPS_2			 			0x8000000000472174ULL
 	#define PS3MAPI_PSID			 			0x800000000047218CULL
-#elif defined(FIRMWARE_4_21)
+#endif
+#if defined(FIRMWARE_4_21)
 	#define PS3MAPI_FW_VERSION			 		0x0421
 	#if defined(IS_MAMBA)
 		#define PS3MAPI_FW_TYPE			 		"CEX MAMBA"
@@ -51,7 +53,8 @@
 	#define PS3MAPI_IDPS_1			 			0x80000000003D9230ULL
 	#define PS3MAPI_IDPS_2			 			0x8000000000477E9CULL
 	#define PS3MAPI_PSID			 			0x8000000000477EB4ULL
-#elif defined(FIRMWARE_4_21DEX)
+#endif
+#if defined(FIRMWARE_4_21DEX)
 	#define PS3MAPI_FW_VERSION			 		0x0421
 	#if defined(IS_MAMBA)
 		#define PS3MAPI_FW_TYPE			 		"DEX MAMBA"
@@ -61,7 +64,8 @@
 	#define PS3MAPI_IDPS_1			 			0x80000000003F7A30ULL
 	#define PS3MAPI_IDPS_2			 			0x800000000048FE9CULL
 	#define PS3MAPI_PSID			 			0x800000000048FEB4ULL
-#elif defined(FIRMWARE_4_30)
+#endif
+#if defined(FIRMWARE_4_30)
 	#define PS3MAPI_FW_VERSION			 		0x0430
 	#if defined(IS_MAMBA)
 		#define PS3MAPI_FW_TYPE			 		"CEX MAMBA"
@@ -71,7 +75,8 @@
 	#define PS3MAPI_IDPS_1			 			0x80000000003DB1B0ULL
 	#define PS3MAPI_IDPS_2			 			0x8000000000476F3CULL
 	#define PS3MAPI_PSID			 			0x8000000000476F54ULL
-#elif defined(FIRMWARE_4_30DEX)
+#endif
+#if defined(FIRMWARE_4_30DEX)
 	#define PS3MAPI_FW_VERSION			 		0x0430
 	#if defined(IS_MAMBA)
 		#define PS3MAPI_FW_TYPE			 		"DEX MAMBA"
@@ -81,7 +86,8 @@
 	#define PS3MAPI_IDPS_1			 			0x80000000003F9930ULL
 	#define PS3MAPI_IDPS_2			 			0x8000000000496F3CULL
 	#define PS3MAPI_PSID			 			0x8000000000496F54ULL
-#elif defined(FIRMWARE_4_31)
+#endif
+#if defined(FIRMWARE_4_31)
 	#define PS3MAPI_FW_VERSION			 		0x0431
 	#if defined(IS_MAMBA)
 		#define PS3MAPI_FW_TYPE			 		"CEX MAMBA"
@@ -91,7 +97,8 @@
 	#define PS3MAPI_IDPS_1			 			0x80000000003DB1B0ULL
 	#define PS3MAPI_IDPS_2			 			0x8000000000476F3CULL
 	#define PS3MAPI_PSID			 			0x8000000000476F54ULL
-#elif defined(FIRMWARE_4_40)
+#endif
+#if defined(FIRMWARE_4_40)
 	#define PS3MAPI_FW_VERSION			 		0x0440
 	#if defined(IS_MAMBA)
 		#define PS3MAPI_FW_TYPE			 		"CEX MAMBA"
@@ -101,7 +108,8 @@
 	#define PS3MAPI_IDPS_1			 			0x80000000003DB830ULL
 	#define PS3MAPI_IDPS_2			 			0x8000000000476F3CULL
 	#define PS3MAPI_PSID			 			0x8000000000476F54ULL
-#elif defined(FIRMWARE_4_41)
+#endif
+#if defined(FIRMWARE_4_41)
 	#define PS3MAPI_FW_VERSION			 		0x0441
 	#if defined(IS_MAMBA)
 		#define PS3MAPI_FW_TYPE			 		"CEX MAMBA"
@@ -111,7 +119,8 @@
 	#define PS3MAPI_IDPS_1			 			0x80000000003DB830ULL
 	#define PS3MAPI_IDPS_2			 			0x8000000000476F3CULL
 	#define PS3MAPI_PSID						0x8000000000476F54ULL
-#elif defined(FIRMWARE_4_41DEX)
+#endif
+#if defined(FIRMWARE_4_41DEX)
 	#define PS3MAPI_FW_VERSION			 		0x0441
 	#if defined(IS_MAMBA)
 		#define PS3MAPI_FW_TYPE			 		"DEX MAMBA"
@@ -121,7 +130,8 @@
 	#define PS3MAPI_IDPS_1			 			0x80000000003FA2B0ULL
 	#define PS3MAPI_IDPS_2			 			0x8000000000496F3CULL
 	#define PS3MAPI_PSID						0x8000000000496F54ULL
-#elif defined(FIRMWARE_4_46)
+#endif
+#if defined(FIRMWARE_4_46)
 	#define PS3MAPI_FW_VERSION			 		0x0446
 	#if defined(IS_MAMBA)
 		#define PS3MAPI_FW_TYPE			 		"CEX MAMBA"
@@ -131,7 +141,8 @@
 	#define PS3MAPI_IDPS_1			 			0x80000000003DBE30ULL
 	#define PS3MAPI_IDPS_2			 			0x8000000000476F3CULL
 	#define PS3MAPI_PSID						0x8000000000476F54ULL
-#elif defined(FIRMWARE_4_46DEX)
+#endif
+#if defined(FIRMWARE_4_46DEX)
 	#define PS3MAPI_FW_VERSION			 		0x0446
 	#if defined(IS_MAMBA)
 		#define PS3MAPI_FW_TYPE			 		"DEX MAMBA"
@@ -141,7 +152,8 @@
 	#define PS3MAPI_IDPS_1			 			0x80000000003FA8B0ULL
 	#define PS3MAPI_IDPS_2			 			0x8000000000496F3CULL
 	#define PS3MAPI_PSID						0x8000000000496F54ULL
-#elif defined(FIRMWARE_4_50)
+#endif
+#if defined(FIRMWARE_4_50)
 	#define PS3MAPI_FW_VERSION			 		0x0450
 	#if defined(IS_MAMBA)
 		#define PS3MAPI_FW_TYPE			 		"CEX MAMBA"
@@ -151,7 +163,8 @@
 	#define PS3MAPI_IDPS_1			 			0x80000000003DE230ULL
 	#define PS3MAPI_IDPS_2			 			0x800000000046CF0CULL
 	#define PS3MAPI_PSID						0x800000000046CF24ULL
-#elif defined(FIRMWARE_4_50DEX)
+#endif
+#if defined(FIRMWARE_4_50DEX)
 	#define PS3MAPI_FW_VERSION			 		0x0450
 	#if defined(IS_MAMBA)
 		#define PS3MAPI_FW_TYPE			 		"DEX MAMBA"
@@ -161,7 +174,8 @@
 	#define PS3MAPI_IDPS_1			 			0x8000000000402AB0ULL
 	#define PS3MAPI_IDPS_2			 			0x8000000000494F0CULL
 	#define PS3MAPI_PSID						0x8000000000494F24ULL
-#elif defined(FIRMWARE_4_53)
+#endif
+#if defined(FIRMWARE_4_53)
 	#define PS3MAPI_FW_VERSION			 		0x0453
 	#if defined(IS_MAMBA)
 		#define PS3MAPI_FW_TYPE			 		"CEX MAMBA"
@@ -171,7 +185,8 @@
 	#define PS3MAPI_IDPS_1			 			0x80000000003DE430ULL
 	#define PS3MAPI_IDPS_2			 			0x800000000046CF0CULL
 	#define PS3MAPI_PSID						0x800000000046CF24ULL
-#elif defined(FIRMWARE_4_53DEX)
+#endif
+#if defined(FIRMWARE_4_53DEX)
 	#define PS3MAPI_FW_VERSION			 		0x0453
 	#if defined(IS_MAMBA)
 		#define PS3MAPI_FW_TYPE			 		"DEX MAMBA"
@@ -181,7 +196,8 @@
 	#define PS3MAPI_IDPS_1			 			0x80000000004045B0ULL
 	#define PS3MAPI_IDPS_2			 			0x8000000000494F1CULL
 	#define PS3MAPI_PSID						0x8000000000494F34ULL
-#elif defined(FIRMWARE_4_55)
+#endif
+#if defined(FIRMWARE_4_55)
 	#define PS3MAPI_FW_VERSION			 		0x0455
 	#if defined(IS_MAMBA)
 		#define PS3MAPI_FW_TYPE			 		"CEX MAMBA"
@@ -191,7 +207,8 @@
 	#define PS3MAPI_IDPS_1			 			0x80000000003E17B0ULL
 	#define PS3MAPI_IDPS_2			 			0x8000000000474F1CULL
 	#define PS3MAPI_PSID						0x8000000000474F34ULL
-#elif defined(FIRMWARE_4_55DEX)
+#endif
+#if defined(FIRMWARE_4_55DEX)
 	#define PS3MAPI_FW_VERSION			 		0x0455
 	#if defined(IS_MAMBA)
 		#define PS3MAPI_FW_TYPE			 		"DEX MAMBA"
@@ -201,7 +218,8 @@
 	#define PS3MAPI_IDPS_1			 			0x8000000000407930ULL
 	#define PS3MAPI_IDPS_2			 			0x800000000049CF1CULL
 	#define PS3MAPI_PSID						0x8000000000494F34ULL
-#elif defined(FIRMWARE_4_60)
+#endif
+#if defined(FIRMWARE_4_60)
 	#define PS3MAPI_FW_VERSION			 		0x0460
 	#if defined(IS_MAMBA)
 		#define PS3MAPI_FW_TYPE			 		"CEX MAMBA"
@@ -211,7 +229,8 @@
 	#define PS3MAPI_IDPS_1			 			0x80000000003E2BB0ULL
 	#define PS3MAPI_IDPS_2			 			0x8000000000474F1CULL
 	#define PS3MAPI_PSID						0x8000000000474F34ULL
-#elif defined(FIRMWARE_4_65)
+#endif
+#if defined(FIRMWARE_4_65)
 	#define PS3MAPI_FW_VERSION			 		0x0465
 	#if defined(IS_MAMBA)
 		#define PS3MAPI_FW_TYPE			 		"CEX MAMBA"
@@ -221,7 +240,8 @@
 	#define PS3MAPI_IDPS_1			 			0x80000000003E2BB0ULL
 	#define PS3MAPI_IDPS_2			 			0x8000000000474F1CULL
 	#define PS3MAPI_PSID						0x8000000000474F34ULL
-#elif defined(FIRMWARE_4_65DEX)
+#endif
+#if defined(FIRMWARE_4_65DEX)
 	#define PS3MAPI_FW_VERSION			 		0x0465
 	#if defined(IS_MAMBA)
 		#define PS3MAPI_FW_TYPE			 		"DEX MAMBA"
@@ -231,7 +251,8 @@
 	#define PS3MAPI_IDPS_1			 			0x80000000004095B0ULL
 	#define PS3MAPI_IDPS_2			 			0x800000000049CF1CULL
 	#define PS3MAPI_PSID						0x800000000049CF34ULL
-#elif defined(FIRMWARE_4_66)
+#endif
+#if defined(FIRMWARE_4_66)
 	#define PS3MAPI_FW_VERSION			 		0x0466
 	#if defined(IS_MAMBA)
 		#define PS3MAPI_FW_TYPE			 		"CEX MAMBA"
@@ -241,7 +262,8 @@
 	#define PS3MAPI_IDPS_1			 			0x80000000003E2BB0ULL
 	#define PS3MAPI_IDPS_2			 			0x8000000000474F1CULL
 	#define PS3MAPI_PSID						0x8000000000474F34ULL
-#elif defined(FIRMWARE_4_66DEX)
+#endif
+#if defined(FIRMWARE_4_66DEX)
 	#define PS3MAPI_FW_VERSION			 		0x0466
 	#if defined(IS_MAMBA)
 		#define PS3MAPI_FW_TYPE			 		"DEX MAMBA"
@@ -251,7 +273,8 @@
 	#define PS3MAPI_IDPS_1			 			0x80000000004095B0ULL
 	#define PS3MAPI_IDPS_2			 			0x800000000049CF1CULL
 	#define PS3MAPI_PSID						0x800000000049CF34ULL
-#elif defined(FIRMWARE_4_70)
+#endif
+#if defined(FIRMWARE_4_70)
 	#define PS3MAPI_FW_VERSION			 		0x0470
 	#if defined(IS_MAMBA)
 		#define PS3MAPI_FW_TYPE			 		"CEX MAMBA"
@@ -309,6 +332,7 @@ int ps3mapi_get_process_mem(process_id_t pid, uint64_t addr, char *buf, int size
 #define PS3MAPI_OPCODE_LOAD_PROC_MODULE				0x0044
 #define PS3MAPI_OPCODE_UNLOAD_PROC_MODULE			0x0045
 #define PS3MAPI_OPCODE_UNLOAD_VSH_PLUGIN			0x0046 //Look in modulespatch.c for code.
+#define PS3MAPI_OPCODE_GET_VSH_PLUGIN_INFO			0x0047 //Look in modulespatch.c for code.
 
 int ps3mapi_get_all_process_modules_prx_id(process_id_t pid, sys_prx_id_t *prx_id_list);
 int ps3mapi_get_process_module_name_by_prx_id(process_id_t pid, sys_prx_id_t prx_id, char *name);
