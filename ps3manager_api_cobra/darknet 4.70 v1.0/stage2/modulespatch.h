@@ -147,13 +147,19 @@ extern uint8_t safe_mode;
 
 /* Functions for kernel */
 void modules_patch_init(void);
+#if defined(NOSPOOF)
+#else
 void do_spoof_patches(void);
+#endif
 void load_boot_plugins(void);
 int prx_load_vsh_plugin(unsigned int slot, char *path, void *arg, uint32_t arg_size);
 int prx_unload_vsh_plugin(unsigned int slot);
 
 /* Syscalls */
+#if defined(NOSPOOF)
+#else
 int sys_vsh_spoof_version(char *version_str);
+#endif
 int sys_prx_load_vsh_plugin(unsigned int slot, char *path, void *arg, uint32_t arg_size);
 int sys_prx_unload_vsh_plugin(unsigned int slot);
 int sys_thread_create_ex(sys_ppu_thread_t *thread, void *entry, uint64_t arg, int prio, uint64_t stacksize, uint64_t flags, const char *threadname);
@@ -162,6 +168,7 @@ int sys_thread_create_ex(sys_ppu_thread_t *thread, void *entry, uint64_t arg, in
 
 void unhook_all_modules(void);
 int ps3mapi_unload_vsh_plugin(char* name);
+int ps3mapi_get_vsh_plugin_info(unsigned int slot, char *name, char *filename);
 
 ///////////// PS3MAPI END //////////////
 

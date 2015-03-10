@@ -13,7 +13,7 @@ BUILD_TYPE     	= release
 
 CFLAGS = -ffunction-sections -fdata-sections -Os -m64 -fno-builtin -fno-exceptions \
 			   -Os -Wall -Wno-strict-aliasing -Wno-multichar $(foreach dir,$(INCLUDE),-I$(dir)) \
-			   -DLV2 -DFIRMWARE_4_70 -DCFW -DUSE_LV1_PEEK_POKE -ffreestanding 
+			   -DLV2 -DFIRMWARE_4_70 -DCFW -DNOSPOOF -DUSE_LV1_PEEK_POKE -ffreestanding 
 CFLAGS += --std=gnu99
 
 ifeq ($(BUILD_TYPE), debug)

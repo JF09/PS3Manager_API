@@ -772,6 +772,7 @@ static INLINE void apply_kernel_patches(void)
 		clear_icache(addr, 4);
 	}
     */
+
 	create_syscall2(9, sys_cfw_lv1_poke);
 	create_syscall2(10, sys_cfw_lv1_call);
 	create_syscall2(11, sys_cfw_lv1_peek);
@@ -791,10 +792,7 @@ int main(void)
     //apply_kernel_patches();
     if (vsh_process) storage_ext_patches();
 	else hook_function_on_precall_success(load_process_symbol, load_process_hooked, 9); //Use old method in case we can not find vsh_process, but their is no reason to this append.
-    map_path_patches(1);	
-	region_patches();
-	
-	map_path("/app_home", "/dev_usb000", 0);
+    region_patches();
 	
     extended_syscall8.addr = 0;
     uint64_t sys8_id = *((uint64_t *)MKA(0x4f0));
@@ -808,6 +806,9 @@ int main(void)
 	create_syscall2(6, sys_cfw_peek);
     create_syscall2(7, sys_cfw_poke);
     create_syscall2(40, sys_cfw_40);
-
+	
+	map_path_patches(1);	
+	map_path("/app_home", "/dev_usb000", 0);
+	
     return 0;
 }

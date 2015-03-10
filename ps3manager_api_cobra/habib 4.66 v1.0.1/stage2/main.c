@@ -458,6 +458,9 @@ LV2_SYSCALL2(int64_t, syscall8, (uint64_t function, uint64_t param1, uint64_t pa
 				case PS3MAPI_OPCODE_UNLOAD_VSH_PLUGIN:
 					return ps3mapi_unload_vsh_plugin((char *)param2);
 				break;
+				case PS3MAPI_OPCODE_GET_VSH_PLUGIN_INFO:
+					return ps3mapi_get_vsh_plugin_info((unsigned int)param2, (char *)param3, (char *)param4);
+				break;
 				//----------
 				//SYSCALL
 				//----------
@@ -641,8 +644,11 @@ LV2_SYSCALL2(int64_t, syscall8, (uint64_t function, uint64_t param1, uint64_t pa
 		break;
 		
 		case SYSCALL8_OPCODE_VSH_SPOOF_VERSION:
+			#if defined(NOSPOOF)
 			return ENOSYS;
-			//return sys_vsh_spoof_version((char *)param1);
+			#else
+			return sys_vsh_spoof_version((char *)param1);
+			#endif
 		break;			
 	
 		case SYSCALL8_OPCODE_LOAD_VSH_PLUGIN:

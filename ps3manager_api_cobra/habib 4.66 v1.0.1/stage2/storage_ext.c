@@ -2388,7 +2388,10 @@ LV2_HOOKED_FUNCTION_PRECALL_SUCCESS_8(int, post_cellFsUtilMount, (const char *bl
 	{
 		hdd0_mounted = 1;
 		read_cobra_config();
+		#if defined(NOSPOOF)
+		#else
 		do_spoof_patches();
+		#endif
 		load_boot_plugins();
 				
 		mutex_lock(mutex, 0);
