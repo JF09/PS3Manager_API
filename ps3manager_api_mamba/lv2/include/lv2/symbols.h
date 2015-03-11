@@ -1125,7 +1125,7 @@
 #define process_rtoc_entry_1				-0x7800
 #define patch_func2 					0x591E0
 #define patch_func2_offset 				0x2C
-#elif defined(FIRMWARE_4_46DEX) //Ported by @Joonie, @nathan_r32_69 Bit thanks to @aldostools for his amazing getsymbol tool :)
+#elif defined(FIRMWARE_4_46DEX) //Ported by  @Joonie,  @Nathan_r32_69 Bit thanks to  @aldostools for his amazing getsymbol tool :)
 #define TOC                                         0x366BD0 // Checked
 #define open_shared_kernel_object_symbol            0x12ABC  // Checked
 #define close_kernel_object_handle_symbol           0x120DC  // Checked
@@ -1191,12 +1191,12 @@
 #define open_fs_object_symbol                       0x1966F4 // Checked
 #define close_fs_object_symbol                      0x1956F0 // Checked
 #define storage_get_device_info_symbol              0x2BC858 // Checked
-#define storage_open_symbol                         0x2BACB0 // Fixed [Old: 0x2BCA80]
+#define storage_open_symbol                         0x2BCA80 // 0x2BACB0 // Fixed [Old: 0x2BCA80]
 #define storage_close_symbol                        0x2BB26C // Checked
 #define storage_read_symbol                         0x2BA454 // Checked
 #define storage_send_device_command_symbol          0x2B9F74 // Checked
 #define storage_map_io_memory_symbol                0x2BC704 // Checked
-#define storage_unmap_io_memory_symbol              0x2BCE04 // Fixed [OLD: 0x2BC5C0]
+#define storage_unmap_io_memory_symbol              0x2BC5C0 // 0x2BCE04 // Fixed [OLD: 0x2BC5C0]
 #define storage_internal_get_device_object_symbol   0x2B9A2C // Checked
 #define decrypt_func_symbol                         0x38000 // Checked
 #define lv1_call_99_wrapper_symbol                  0x525C0 // Checked
@@ -1205,8 +1205,8 @@
 #define prx_start_module_symbol                     0x8A54C // Checked
 #define prx_stop_module_symbol                      0x8B924 // Checked
 #define prx_unload_module_symbol                    0x8A280 // Checked
-#define prx_get_module_info_symbol			0x89C78 // bytes matched: 0x80  F821FF517C0802A6FB210078FB410080FB610088FB810090FBA100987CBB2B78
-#define prx_get_module_list_symbol			0x89CF8 // bytes matched: 0x80  F821FF517C0802A6FB010070FB210078FB410080FB610088FB810090FBA10098
+#define prx_get_module_info_symbol			0x89C78 // 
+#define prx_get_module_list_symbol			0x89CF8 // 
 #define extend_kstack_symbol                        0x7225C  // Checked
 #define get_pseudo_random_number_symbol             0x25EBBC // Checked
 #define syscall_table_symbol                        0x37CFE8 // Checked
