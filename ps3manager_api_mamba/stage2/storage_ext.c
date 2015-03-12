@@ -2338,6 +2338,7 @@ LV2_HOOKED_FUNCTION_COND_POSTCALL_2(int, emu_disc_auth, (uint64_t func, uint64_t
 
 		if (param5004 == 1) /* Auth psx disc */
 		{
+			if (!vsh_process) vsh_process = get_vsh_process(); //NzV
 			if (vsh_process && get_current_process_critical() == vsh_process && effective_disctype == DEVICE_TYPE_PSX_CD)
 			{
 				// Just bypass auth and leave current 0x29 profile
@@ -2346,6 +2347,7 @@ LV2_HOOKED_FUNCTION_COND_POSTCALL_2(int, emu_disc_auth, (uint64_t func, uint64_t
 		}
 		else if (param5004 == 0x29)
 		{
+			if (!vsh_process) vsh_process = get_vsh_process(); //NzV
 			if (vsh_process && get_current_process_critical() == vsh_process)
 			{
 				if (could_not_read_disc)
